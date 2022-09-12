@@ -8,23 +8,28 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class SampleController {
 
-//    @RequestMapping(value="/order/1", method= RequestMethod.GET)
+    //    @RequestMapping(value="/order/1", method= RequestMethod.GET)
     @GetMapping("/order/{orderId}")
-    public String getOrder(@PathVariable("orderId") String id){
+    public String getOrder(@PathVariable("orderId") String id) throws IllegalAccessException {
         log.info("Get some order : " + id);
-        return "orderId:"+ id + ", orderAmount:1000";
+
+        if ("500".equals(id)) {
+            throw new IllegalAccessException("500 is not valid order Id");
+        }
+
+        return "orderId:" + id + ", orderAmount:1000";
     }
 
     @GetMapping("/order")
     public String getOrderWIthRequestParam(
             @RequestParam(value = "orderId", required = false, defaultValue = "defaultId") String id,
-            @RequestParam("orderAmount") Integer amount){
+            @RequestParam("orderAmount") Integer amount) {
         log.info("Get some order : " + id + ", amount : " + amount);
-        return "orderId:"+ id + ", orderAmount" + amount;
+        return "orderId:" + id + ", orderAmount" + amount;
     }
 
     @DeleteMapping("/order/{orderId}")
-    public String deleteOrder(@PathVariable("orderId") String id){
+    public String deleteOrder(@PathVariable("orderId") String id) {
         log.info("Delete some order : " + id);
         return "Delete orderId:" + id;
     }
@@ -32,14 +37,14 @@ public class SampleController {
     @PostMapping("/order")
     public String createOrder(
             @RequestBody CreateOrderRequest createOrderRequest,
-            @RequestHeader String userAccountId){
+            @RequestHeader String userAccountId) {
         log.info("Create order" + createOrderRequest + ", userAccountId: " + userAccountId);
         return "orderId:" + createOrderRequest.getOrderId()
-                +", orderAmount:" + createOrderRequest.getOrderAmount() + userAccountId;
+                + ", orderAmount:" + createOrderRequest.getOrderAmount() + userAccountId;
     }
 
     @Data
-    public static class CreateOrderRequest{
+    public static class CreateOrderRequest {
         private String orderId;
         private Integer orderAmount;
     }
